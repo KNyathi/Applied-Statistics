@@ -14,8 +14,8 @@ ymin = y0 - r
 def estimate_pi(n):
     m = 0
     for _ in range(n):
-        xp = (xmax-xmin)*random.random() + xmin
-        yp = (ymax-ymin)*random.random() + ymin
+        xp = random.uniform(xmin, xmax)
+        yp = random.uniform(ymin, ymax)
 
         if (xp - x0)**2 + (yp - y0)**2 <= r**2:
             m += 1
