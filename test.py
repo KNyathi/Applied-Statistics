@@ -145,6 +145,54 @@ def relative_frequencies(random_sample, left_boundary, right_boundary, num_plots
     
     return relative_frequencies
 
+import matplotlib.pyplot as plt
+
+def relative_frequencies(random_sample, left_boundary, right_boundary, num_plots):
+    # Determine the width of each interval (bin)
+    interval_width = (right_boundary - left_boundary) / num_plots
+    
+    # Initialize a list to hold the frequency count for each interval
+    frequency_counts = [0] * num_plots
+    
+    # Loop through the random sample and count which interval each number falls into
+    for num in random_sample:
+        # Check if the number is within the specified boundaries
+        if left_boundary <= num <= right_boundary:
+            # Determine which interval the number falls into
+            index = int((num - left_boundary) // interval_width)
+            
+            # Edge case for the rightmost boundary
+            if index == num_plots:
+                index -= 1
+            
+            # Increment the count for that interval
+            frequency_counts[index] += 1
+    
+    # Convert the frequency counts to relative frequencies
+    total_numbers = len(random_sample)
+    relative_frequencies = [count / total_numbers for count in frequency_counts]
+    
+    return relative_frequencies
+
+
+def draw_histogram(random_sample, left_boundary, right_boundary, num_plots, relative_frequencies):
+    # Calculate the bin edges
+    bins = [left_boundary + (i * (right_boundary - left_boundary) / num_plots) for i in range(num_plots + 1)]
+    
+    # Create the histogram plot
+    plt.figure(figsize=(8, 6))
+    plt.bar(range(num_plots), relative_frequencies, width=1, align='center', edgecolor='black', tick_label=[f'{bins[i]:.1f}-{bins[i+1]:.1f}' for i in range(len(bins)-1)])
+    
+    # Labeling the axes
+    plt.xlabel('Intervals')
+    plt.ylabel('Relative Frequency')
+    plt.title('Relative Frequency Histogram')
+    
+    # Show the plot
+    plt.show()
+
+
+
 
 # Parameters
 a = 22695477      # multiplier
@@ -153,7 +201,7 @@ M = 2**32   # modulus
 seed = 1    # starting value (x_0)
 
 
-n_values = [10**2-1, 10**3-1, 10**4-1, 10**5-1, 10**6-1]
+n_values = [10**2-1, 10**3-1, 10**4-1, 10**5-1]
 
 for n in n_values:
 
@@ -165,12 +213,11 @@ for n in n_values:
                     unique_numbers, repeat_counts = check_repeated_numbers(random_numbers)
                     aggregate()
 
-                    # Example usage:
-                    random_sample = [1.2, 2.5, 3.7, 4.2, 5.1, 3.3, 2.8, 7.0, 6.5, 8.9]  # Sample of random numbers
                     left_boundary = 0  # Minimum boundary of the range
                     right_boundary = 10  # Maximum boundary of the range
-                    num_plots = 5  # Number of intervals (bins)
+                    num_plots = 10  # Number of intervals (bins)
 
-                    # Get the relative frequencies
-                    frequencies = relative_frequencies(random_sample, left_boundary, right_boundary, num_plots)
+                    frequencies = relative_frequencies(random_numbers, left_boundary, right_boundary, num_plots)
                     print(f"Relative Frequencies: {frequencies}")
+
+                    draw_histogram(random_numbers, left_boundary, right_boundary, num_plots, frequencies)
