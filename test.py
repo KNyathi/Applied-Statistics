@@ -1,4 +1,6 @@
 import math
+import numpy as np
+from scipy.stats import chi2
 
 # Linear Congruential Generator
 def linear_congruential_generator(a, b, M, seed, n):
@@ -145,6 +147,7 @@ def relative_frequencies(random_sample, left_boundary, right_boundary, num_plots
     
     return relative_frequencies
 
+
 import matplotlib.pyplot as plt
 
 def relative_frequencies(random_sample, left_boundary, right_boundary, num_plots):
@@ -194,6 +197,30 @@ def draw_histogram(random_sample, left_boundary, right_boundary, num_plots, rela
 
 
 
+# Function to calculate the Pearson Chi-Square criterion
+def pearson_chi_square(relative_frequencies, num_plots):
+    # Calculate observed relative frequencies
+    observed_frequencies = relative_frequencies
+    
+    # Total number of samples
+    total_samples = n
+    
+    # Convert observed frequencies to actual observed counts
+    observed_counts = [freq * total_samples for freq in observed_frequencies]
+    
+    # Expected counts for a uniform distribution (evenly distributed across all bins)
+    expected_count = total_samples / num_plots
+    expected_counts = [expected_count] * num_plots
+    
+    # Calculate the Pearson Chi-Square statistic
+    chi_square_statistic = sum(((o - e) ** 2) / e for o, e in zip(observed_counts, expected_counts))
+    
+    return chi_square_statistic
+
+
+
+
+
 # Parameters
 a = 22695477      # multiplier
 b = 1       # increment
@@ -211,7 +238,7 @@ for n in n_values:
                 if seed>0 and seed<M:
                     random_numbers, mean_value, variance_value, std_dev, relative_err, relative_err_variance = simulations()
                     unique_numbers, repeat_counts = check_repeated_numbers(random_numbers)
-                    aggregate()
+                    #aggregate()
 
                     left_boundary = 0  # Minimum boundary of the range
                     right_boundary = 10  # Maximum boundary of the range
@@ -221,3 +248,16 @@ for n in n_values:
                     print(f"Relative Frequencies: {frequencies}")
 
                     draw_histogram(random_numbers, left_boundary, right_boundary, num_plots, frequencies)
+
+
+                    # Calculate the Pearson Chi-Square statistic
+                    chi_square_stat = pearson_chi_square(frequencies, num_plots)
+                    print(f"Pearson Chi-Square statistic: {chi_square_stat}")
+
+
+                    # Calculate the p-value
+                    degrees_of_freedom = num_plots - 1
+                    p_value = chi2.cdf(chi_square_stat, degrees_of_freedom)
+
+                    print(f"Chi-Squared statistic: {chi_square_stat}")
+                    print(f"P-value: {p_value}")
